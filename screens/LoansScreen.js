@@ -6,13 +6,21 @@ import { globalStyles, colors } from '../styles';
 export default function LoansScreen({ navigation }) {
     const [loans, setLoans] = useState([]);
     const [clients, setClients] = useState([]);
+    const [interestRates, setInterestRates] = useState([]); // Asegúrate de tener los porcentajes de préstamo disponibles
+    const [totalInstallments, setTotalInstallments] = useState(0); // Estado para almacenar la suma de las cuotas
 
     useEffect(() => {
         const loadLoansAndClients = async () => {
             const loansData = JSON.parse(await AsyncStorage.getItem('loans')) || [];
             const clientsData = JSON.parse(await AsyncStorage.getItem('clients')) || [];
+            const ratesData = JSON.parse(await AsyncStorage.getItem('interestRates')) || []; // Cargar los porcentajes de préstamo
             setLoans(loansData);
             setClients(clientsData);
+            setInterestRates(ratesData); // Actualizar el estado de los porcentajes de préstamo
+
+            // Calcular la suma de las cuotas
+            const total = loansData.reduce((accumulator, loan) => accumulator + loan.installmentValue, 0);
+            setTotalInstallments(total);
         };
 
         const focusListener = navigation.addListener('focus', loadLoansAndClients);
@@ -49,12 +57,16 @@ export default function LoansScreen({ navigation }) {
         const client = clients.find((client) => client.id === item.clientId);
         const clientName = client ? client.name : 'Cliente no encontrado';
 
+        const rate = interestRates.find(rate => rate.id === item.rateId);
+        const rateValue = rate ? `${rate.value}%` : 'Porcentaje no encontrado';
+
         return (
             <View style={styles.loanItem}>
                 <View style={styles.loanDetails}>
                     <Text style={styles.loanText}>Cliente: {clientName} (ID: {item.clientId})</Text>
                     <Text style={styles.loanText}>Valor del Préstamo: ${item.loanValue.toFixed(2)}</Text>
                     <Text style={styles.loanText}>Valor de la Cuota: ${item.installmentValue.toFixed(2)}</Text>
+                    <Text style={styles.loanText}>Porcentaje de Préstamo: {rateValue}</Text>
                     <Text style={styles.loanText}>Fecha del Préstamo: {item.loanDate}</Text>
                 </View>
                 <View style={styles.buttonContainer}>
@@ -75,6 +87,14 @@ export default function LoansScreen({ navigation }) {
         );
     };
 
+    const renderTotalInstallments = () => {
+        return (
+            <View style={styles.totalContainer}>
+                <Text style={styles.totalText}>Total de Cuotas: ${totalInstallments.toFixed(0)}</Text>
+            </View>
+        );
+    };
+
     return (
         <View style={globalStyles.container}>
             <Text style={globalStyles.title}>Listado de Préstamos</Text>
@@ -83,6 +103,7 @@ export default function LoansScreen({ navigation }) {
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.listContainer}
+                ListFooterComponent={renderTotalInstallments} // Componente al final de la lista
             />
         </View>
     );
@@ -125,5 +146,13 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         paddingBottom: 20,
+    },
+    totalContainer: {
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    totalText: {
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
