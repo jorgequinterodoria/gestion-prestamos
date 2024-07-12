@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles, colors } from '../styles';
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { globalStyles, colors } from '../styles'
 
 export default function PaidLoansScreen() {
-    const [paidLoans, setPaidLoans] = useState([]);
+    const [paidLoans, setPaidLoans] = useState([])
 
     useEffect(() => {
         const loadPaidLoans = async () => {
-            const loansData = JSON.parse(await AsyncStorage.getItem('loans')) || [];
-            const filteredLoans = loansData.filter(loan => !loan.isActive);
-            setPaidLoans(filteredLoans);
+            const loansData = JSON.parse(await AsyncStorage.getItem('loans')) || []
+            const filteredLoans = loansData.filter(loan => !loan.isActive)
+            setPaidLoans(filteredLoans)
         };
 
-        loadPaidLoans();
-    }, []);
+        loadPaidLoans()
+    }, [])
 
     const renderItem = ({ item }) => {
         return (

@@ -1,59 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, Alert, Platform, Switch } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import RNPickerSelect from 'react-native-picker-select';
-import { globalStyles, colors } from '../styles';
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, TextInput, Button, Alert, Platform, Switch } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import RNPickerSelect from 'react-native-picker-select'
+import { globalStyles, colors } from '../styles'
 
 export default function LoanFormScreen({ navigation }) {
-    const [clients, setClients] = useState([]);
-    const [interestRates, setInterestRates] = useState([]);
-    const [paymentTerms, setPaymentTerms] = useState([]);
-    const [selectedClient, setSelectedClient] = useState('');
-    const [selectedRate, setSelectedRate] = useState('');
-    const [selectedTerm, setSelectedTerm] = useState('');
-    const [loanValue, setLoanValue] = useState('');
-    const [installmentValue, setInstallmentValue] = useState('');
-    const [loanDate, setLoanDate] = useState(new Date());
-    const [isActive, setIsActive] = useState(true); // Nuevo estado para indicar si el préstamo está activo
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [clients, setClients] = useState([])
+    const [interestRates, setInterestRates] = useState([])
+    const [paymentTerms, setPaymentTerms] = useState([])
+    const [selectedClient, setSelectedClient] = useState('')
+    const [selectedRate, setSelectedRate] = useState('')
+    const [selectedTerm, setSelectedTerm] = useState('')
+    const [loanValue, setLoanValue] = useState('')
+    const [installmentValue, setInstallmentValue] = useState('')
+    const [loanDate, setLoanDate] = useState(new Date())
+    const [isActive, setIsActive] = useState(true)
+    const [showDatePicker, setShowDatePicker] = useState(false)
 
     useEffect(() => {
         const loadClients = async () => {
-            const clientsData = JSON.parse(await AsyncStorage.getItem('clients')) || [];
-            setClients(clientsData);
+            const clientsData = JSON.parse(await AsyncStorage.getItem('clients')) || []
+            setClients(clientsData)
         };
 
         const loadInterestRates = async () => {
-            const rates = JSON.parse(await AsyncStorage.getItem('interestRates')) || [];
-            setInterestRates(rates);
+            const rates = JSON.parse(await AsyncStorage.getItem('interestRates')) || []
+            setInterestRates(rates)
         };
 
         const loadPaymentTerms = async () => {
-            const terms = JSON.parse(await AsyncStorage.getItem('paymentTerms')) || [];
-            setPaymentTerms(terms);
+            const terms = JSON.parse(await AsyncStorage.getItem('paymentTerms')) || []
+            setPaymentTerms(terms)
         };
 
-        loadClients();
-        loadInterestRates();
-        loadPaymentTerms();
+        loadClients()
+        loadInterestRates()
+        loadPaymentTerms()
     }, []);
 
     const calculateInstallment = () => {
         if (!selectedRate || !loanValue) {
-            Alert.alert('Error', 'Por favor selecciona un porcentaje y un valor de préstamo válidos.');
+            Alert.alert('Error', 'Por favor selecciona un porcentaje y un valor de préstamo válidos.')
             return;
         }
 
-        const rate = interestRates.find(rate => rate.id === selectedRate);
-        const monthlyInterest = rate.value / 100;
-        const installment = parseFloat(loanValue) * monthlyInterest;
-        setInstallmentValue(installment.toFixed(2));
+        const rate = interestRates.find(rate => rate.id === selectedRate)
+        const monthlyInterest = rate.value / 100
+        const installment = parseFloat(loanValue) * monthlyInterest
+        setInstallmentValue(installment.toFixed(2))
     };
 
     const saveLoan = async () => {
         if (!selectedClient || !selectedRate || !selectedTerm || !loanValue || !installmentValue || !loanDate) {
-            Alert.alert('Error', 'Por favor completa todos los campos.');
+            Alert.alert('Error', 'Por favor completa todos los campos.')
             return;
         }
 
@@ -65,33 +65,30 @@ export default function LoanFormScreen({ navigation }) {
             loanValue: parseFloat(loanValue),
             installmentValue: parseFloat(installmentValue),
             loanDate: loanDate.toISOString().split('T')[0],
-            isActive: isActive, // Guardar el estado de activo/desactivo
+            isActive: isActive, 
         };
 
-        // Guardar préstamo en local storage
-        const loans = JSON.parse(await AsyncStorage.getItem('loans')) || [];
-        loans.push(loan);
-        await AsyncStorage.setItem('loans', JSON.stringify(loans));
 
-        // Limpiar campos después de guardar
-        setSelectedClient('');
-        setSelectedRate('');
-        setSelectedTerm('');
-        setLoanValue('');
-        setInstallmentValue('');
-        setLoanDate(new Date());
-        setIsActive(true); // Restablecer el estado a activo
+        const loans = JSON.parse(await AsyncStorage.getItem('loans')) || []
+        loans.push(loan)
+        await AsyncStorage.setItem('loans', JSON.stringify(loans))
 
-        // Mostrar mensaje de éxito
-        Alert.alert('Éxito', 'Préstamo guardado exitosamente.');
+        setSelectedClient('')
+        setSelectedRate('')
+        setSelectedTerm('')
+        setLoanValue('')
+        setInstallmentValue('')
+        setLoanDate(new Date())
+        setIsActive(true)
 
-        // Navegar de regreso a la lista de préstamos
-        navigation.goBack();
+        Alert.alert('Éxito', 'Préstamo guardado exitosamente.')
+
+        navigation.goBack()
     };
 
     const handleDateChange = (event, selectedDate) => {
-        const currentDate = selectedDate || loanDate;
-        setShowDatePicker(Platform.OS === 'ios');
+        const currentDate = selectedDate || loanDate
+        setShowDatePicker(Platform.OS === 'ios')
         setLoanDate(currentDate);
     };
 
@@ -141,9 +138,7 @@ export default function LoanFormScreen({ navigation }) {
                 placeholder="Valor de la Cuota"
                 keyboardType="numeric"
                 value={installmentValue}
-                onChangeText={setInstallmentValue}
-                editable={false} // El valor de la cuota se calcula automáticamente
-            />
+                onChangeText={setInstallmentValue}            />
 
             {/* Selector de fecha del préstamo */}
             <View>

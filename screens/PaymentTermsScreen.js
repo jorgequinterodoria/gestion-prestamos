@@ -1,63 +1,62 @@
-// PaymentTermsScreen.js
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput, Button, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles, colors } from '../styles';
+import React, { useState, useEffect } from 'react'
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput, Button, Alert } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { globalStyles, colors } from '../styles'
 
 export default function PaymentTermsScreen() {
-    const [paymentTerms, setPaymentTerms] = useState([]);
-    const [newTerm, setNewTerm] = useState('');
-    const [editMode, setEditMode] = useState(false);
-    const [editId, setEditId] = useState(null);
+    const [paymentTerms, setPaymentTerms] = useState([])
+    const [newTerm, setNewTerm] = useState('')
+    const [editMode, setEditMode] = useState(false)
+    const [editId, setEditId] = useState(null)
 
     useEffect(() => {
         const loadPaymentTerms = async () => {
-            const terms = JSON.parse(await AsyncStorage.getItem('paymentTerms')) || [];
-            setPaymentTerms(terms);
+            const terms = JSON.parse(await AsyncStorage.getItem('paymentTerms')) || []
+            setPaymentTerms(terms)
         };
-        loadPaymentTerms();
+        loadPaymentTerms()
     }, []);
 
     const addTerm = async () => {
         if (!newTerm) {
-            Alert.alert('Error', 'Por favor ingresa un plazo válido.');
+            Alert.alert('Error', 'Por favor ingresa un plazo válido.')
             return;
         }
 
-        const term = { id: Date.now().toString(), value: newTerm };
-        const updatedTerms = [...paymentTerms, term];
-        setPaymentTerms(updatedTerms);
-        await AsyncStorage.setItem('paymentTerms', JSON.stringify(updatedTerms));
-        setNewTerm('');
+        const term = { id: Date.now().toString(), value: newTerm }
+        const updatedTerms = [...paymentTerms, term]
+        setPaymentTerms(updatedTerms)
+        await AsyncStorage.setItem('paymentTerms', JSON.stringify(updatedTerms))
+        setNewTerm('')
     };
 
     const editTerm = async () => {
         if (!newTerm) {
-            Alert.alert('Error', 'Por favor ingresa un plazo válido.');
-            return;
+            Alert.alert('Error', 'Por favor ingresa un plazo válido.')
+            return
         }
 
         const updatedTerms = paymentTerms.map(term =>
             term.id === editId ? { ...term, value: newTerm } : term
         );
 
-        setPaymentTerms(updatedTerms);
-        await AsyncStorage.setItem('paymentTerms', JSON.stringify(updatedTerms));
-        setEditMode(false);
-        setEditId(null);
-        setNewTerm('');
+        setPaymentTerms(updatedTerms)
+        await AsyncStorage.setItem('paymentTerms', JSON.stringify(updatedTerms))
+        setEditMode(false)
+        setEditId(null)
+        setNewTerm('')
     };
 
     const deleteTerm = async (id) => {
-        const updatedTerms = paymentTerms.filter(term => term.id !== id);
-        await AsyncStorage.setItem('paymentTerms', JSON.stringify(updatedTerms));
-        setPaymentTerms(updatedTerms);
+        const updatedTerms = paymentTerms.filter(term => term.id !== id)
+        await AsyncStorage.setItem('paymentTerms', JSON.stringify(updatedTerms))
+        setPaymentTerms(updatedTerms)
     };
 
     const startEdit = (id, value) => {
-        setEditMode(true);
-        setEditId(id);
-        setNewTerm(value);
+        setEditMode(true)
+        setEditId(id)
+        setNewTerm(value)
     };
 
     const renderItem = ({ item }) => (

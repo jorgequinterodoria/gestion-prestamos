@@ -1,7 +1,6 @@
-// SettingsScreen.js
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { globalStyles, colors } from '../styles';
+import React from 'react'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { globalStyles, colors } from '../styles'
 
 export default function SettingsScreen({ navigation }) {
     return (

@@ -1,44 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles, colors } from '../styles';
+import React, { useState, useEffect } from 'react'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { globalStyles, colors } from '../styles'
 
 export default function LoansScreen({ navigation }) {
-    const [loans, setLoans] = useState([]);
-    const [clients, setClients] = useState([]);
-    const [interestRates, setInterestRates] = useState([]); // Asegúrate de tener los porcentajes de préstamo disponibles
-    const [totalInstallments, setTotalInstallments] = useState(0); // Estado para almacenar la suma de las cuotas
+    const [loans, setLoans] = useState([])
+    const [clients, setClients] = useState([])
+    const [interestRates, setInterestRates] = useState([])
+    const [totalInstallments, setTotalInstallments] = useState(0)
 
     useEffect(() => {
         const loadLoansAndClients = async () => {
-            const loansData = JSON.parse(await AsyncStorage.getItem('loans')) || [];
-            const clientsData = JSON.parse(await AsyncStorage.getItem('clients')) || [];
-            const ratesData = JSON.parse(await AsyncStorage.getItem('interestRates')) || []; // Cargar los porcentajes de préstamo
-            setLoans(loansData);
-            setClients(clientsData);
-            setInterestRates(ratesData); // Actualizar el estado de los porcentajes de préstamo
+            const loansData = JSON.parse(await AsyncStorage.getItem('loans')) || []
+            const clientsData = JSON.parse(await AsyncStorage.getItem('clients')) || []
+            const ratesData = JSON.parse(await AsyncStorage.getItem('interestRates')) || []
+            setLoans(loansData)
+            setClients(clientsData)
+            setInterestRates(ratesData)
 
-            // Calcular la suma de las cuotas
-            const total = loansData.reduce((accumulator, loan) => accumulator + loan.installmentValue, 0);
-            setTotalInstallments(total);
+            const total = loansData.reduce((accumulator, loan) => accumulator + loan.installmentValue, 0)
+            setTotalInstallments(total)
         };
 
-        const focusListener = navigation.addListener('focus', loadLoansAndClients);
+        const focusListener = navigation.addListener('focus', loadLoansAndClients)
 
-        // Verificar si focusListener tiene remove, de lo contrario usar removeListener
         return () => {
             if (focusListener && focusListener.remove) {
-                focusListener.remove();
+                focusListener.remove()
             } else {
-                navigation.removeListener('focus', loadLoansAndClients);
+                navigation.removeListener('focus', loadLoansAndClients)
             }
         };
-    }, [navigation]);
+    }, [navigation])
 
     const deleteLoan = async (id) => {
-        const updatedLoans = loans.filter((loan) => loan.id !== id);
-        await AsyncStorage.setItem('loans', JSON.stringify(updatedLoans));
-        setLoans(updatedLoans);
+        const updatedLoans = loans.filter((loan) => loan.id !== id)
+        await AsyncStorage.setItem('loans', JSON.stringify(updatedLoans))
+        setLoans(updatedLoans)
     };
 
     const confirmDeleteLoan = (id) => {
@@ -54,11 +52,11 @@ export default function LoansScreen({ navigation }) {
     };
 
     const renderItem = ({ item }) => {
-        const client = clients.find((client) => client.id === item.clientId);
-        const clientName = client ? client.name : 'Cliente no encontrado';
+        const client = clients.find((client) => client.id === item.clientId)
+        const clientName = client ? client.name : 'Cliente no encontrado'
 
-        const rate = interestRates.find(rate => rate.id === item.rateId);
-        const rateValue = rate ? `${rate.value}%` : 'Porcentaje no encontrado';
+        const rate = interestRates.find(rate => rate.id === item.rateId)
+        const rateValue = rate ? `${rate.value}%` : 'Porcentaje no encontrado'
 
         return (
             <View style={styles.loanItem}>
