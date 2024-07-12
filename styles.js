@@ -2,12 +2,13 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
-    primary: '#4CAF50',
-    secondary: '#FF9800',
+    primary: '#2196F3',
+    secondary: '#03A9F4',
     background: '#FFFFFF',
     text: '#212121',
-    border: '#4CAF50',
+    border: '#2196F3',
 };
+
 
 export const globalStyles = StyleSheet.create({
     container: {
