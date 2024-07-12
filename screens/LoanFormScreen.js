@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Button, Alert, Platform, Switch } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
@@ -15,6 +15,7 @@ export default function LoanFormScreen({ navigation }) {
     const [loanValue, setLoanValue] = useState('');
     const [installmentValue, setInstallmentValue] = useState('');
     const [loanDate, setLoanDate] = useState(new Date());
+    const [isActive, setIsActive] = useState(true); // Nuevo estado para indicar si el préstamo está activo
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     useEffect(() => {
@@ -64,6 +65,7 @@ export default function LoanFormScreen({ navigation }) {
             loanValue: parseFloat(loanValue),
             installmentValue: parseFloat(installmentValue),
             loanDate: loanDate.toISOString().split('T')[0],
+            isActive: isActive, // Guardar el estado de activo/desactivo
         };
 
         // Guardar préstamo en local storage
@@ -78,6 +80,7 @@ export default function LoanFormScreen({ navigation }) {
         setLoanValue('');
         setInstallmentValue('');
         setLoanDate(new Date());
+        setIsActive(true); // Restablecer el estado a activo
 
         // Mostrar mensaje de éxito
         Alert.alert('Éxito', 'Préstamo guardado exitosamente.');
@@ -155,6 +158,18 @@ export default function LoanFormScreen({ navigation }) {
                 )}
             </View>
 
+            {/* Switch para activar/desactivar préstamo */}
+            <View style={styles.switchContainer}>
+                <Text style={styles.switchText}>Prestamo Activo</Text>
+                <Switch
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={isActive ? "#f5dd4b" : "#f4f3f4"}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => setIsActive(previousState => !previousState)}
+                    value={isActive}
+                />
+            </View>
+
             {/* Botón para calcular valor de la cuota */}
             <Button title="Calcular Cuota" onPress={calculateInstallment} />
 
@@ -198,5 +213,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 5,
         justifyContent: 'center',
+    },
+    switchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    switchText: {
+        fontSize: 18,
     },
 });

@@ -37,6 +37,12 @@ export default function MenuScreen({ navigation }) {
             >
                 <Text style={styles.menuText}>Configuración</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => navigation.navigate('PrestamosPagados')}
+            >
+                <Text style={styles.menuText}>Préstamos Pagados</Text>
+            </TouchableOpacity>
         </View>
     );
 }

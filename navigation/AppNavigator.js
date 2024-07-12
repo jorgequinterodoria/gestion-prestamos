@@ -12,6 +12,7 @@ import LoanFormScreen from '../screens/LoanFormScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PaymentTermsScreen from '../screens/PaymentTermsScreen';
 import InterestRatesScreen from '../screens/InterestRatesScreen';
+import PaidLoansScreen from '../screens/PaidLoansScreen';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ export default function AppNavigator() {
                 <Stack.Screen name="Settings" component={SettingsScreen} />
                 <Stack.Screen name="InterestRates" component={InterestRatesScreen} />
                 <Stack.Screen name="PaymentTerms" component={PaymentTermsScreen} />
+                <Stack.Screen name="PrestamosPagados" component={PaidLoansScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );
